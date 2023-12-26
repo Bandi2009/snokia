@@ -15,6 +15,9 @@ const int joystick_s = 19;
 // 84 x 48 matrix display
 Adafruit_PCD8544 display = Adafruit_PCD8544(CLK,DIN,DC,CE,RST);
 
+const int MATRIX_WIDTH = 14;
+const int MATRIX_HEIGTH = 8;
+
 struct snake
 {
   int x;
@@ -171,21 +174,21 @@ void loop()
       break;
     }
 
-    if (kigyo[p].y > 7)
+    if (kigyo[p].y > MATRIX_HEIGTH - 1 )
     {
       kigyo[p].y = 0;
     }
-    if (kigyo[p].x > 7)
+    if (kigyo[p].x > MATRIX_WIDTH - 1)
     {
       kigyo[p].x = 0;
     }
     if (kigyo[p].y < 0)
     {
-      kigyo[p].y = 7;
+      kigyo[p].y = MATRIX_HEIGTH - 1;
     }
     if (kigyo[p].x < 0)
     {
-      kigyo[p].x = 7;
+      kigyo[p].x = MATRIX_WIDTH - 1;
     }
   }
   lc.setLed(0, kigyo[0].x, kigyo[0].y, true);
