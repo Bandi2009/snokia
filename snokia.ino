@@ -41,7 +41,7 @@ const int MAXKIGXOHOSSZ = 64;
 
 int kigyohossza = 3;
 const unsigned KIGYOLASSUSAG = 500;
-static char iranyitas = 'w';
+static char iranyitas = 's';
 snake kigyo[MAXKIGXOHOSSZ];
 static char pi[MAXKIGXOHOSSZ];
 
@@ -72,7 +72,7 @@ void setup()
   {
     kigyo[i].x = 4;
     kigyo[i].y = 0 + kigyohossza - 1 - i;
-    pi[i] = 'w';
+    pi[i] = 's';
     lc.setLed(0, kigyo[i].x, kigyo[i].y, true);
     display.display();
     delay(KIGYOLASSUSAG);
@@ -115,14 +115,14 @@ void loop()
   {
     switch (pi[p])
     {
-    case 'w':
+    case 's':
       kigyo[p].y++;
       break;
     case 'a':
       kigyo[p].x--;
       break;
 
-    case 's':
+    case 'w':
       kigyo[p].y--;
       break;
 
