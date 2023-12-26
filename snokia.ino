@@ -12,7 +12,37 @@ const int joystick_y = 36;
 const int joystick_x = 26;
 const int joystick_s = 19;
 
+// 84 x 48 matrix display
 Adafruit_PCD8544 display = Adafruit_PCD8544(CLK,DIN,DC,CE,RST);
+
+struct snake
+{
+  int x;
+  int y;
+};
+typedef struct snake snake;
+
+const int MAXKIGXOHOSSZ = 64;
+
+int kigyohossza = 3;
+const unsigned KIGYOLASSUSAG = 500;
+static char iranyitas = 'w';
+snake kigyo[MAXKIGXOHOSSZ];
+static char pi[MAXKIGXOHOSSZ];
+
+class LedEmulator
+{
+  static const int dotWidth = 6;
+
+  public:
+    void setLed(int dummy, unsigned int x, unsigned int y, bool on)
+    {
+       display.fillRect(x * dotWidth, y * dotWidth, dotWidth, dotWidth, on ? BLACK : WHITE);
+    }
+
+};
+
+LedEmulator lc;
 
 void setup()
 {
@@ -20,15 +50,147 @@ void setup()
   display.begin();
   display.setContrast(50);
   display.clearDisplay();
-  display.fillRect(10,10,6,6, BLACK);
   display.display();
   pinMode(joystick_s, INPUT_PULLUP);
+
+  for (int i = kigyohossza - 1; i >= 0; i--)
+  {
+    kigyo[i].x = 4;
+    kigyo[i].y = 0 + kigyohossza - 1 - i;
+    pi[i] = 'w';
+    lc.setLed(0, kigyo[i].x, kigyo[i].y, true);
+    display.display();
+    delay(KIGYOLASSUSAG);
+  }
 }
 
 void loop()
 {
-  display.clearDisplay();
-  display.printf("x:%d y:%d %d",analogRead(joystick_x),analogRead(joystick_y), digitalRead(joystick_s));
+//  display.printf("x:%d y:%d %d",analogRead(joystick_x),analogRead(joystick_y), digitalRead(joystick_s));
+
+  if (Serial.available())
+  {
+    if (iranyitas == 'w')
+    {
+      switch (Serial.read())
+      {
+      case 'a':
+        iranyitas = 'a';
+        break;
+
+      case 'd':
+        iranyitas = 'd';
+        break;
+
+      default:
+        break;
+      }
+    }
+
+    if (iranyitas == 'a')
+    {
+      switch (Serial.read())
+      {
+      case 'w':
+        iranyitas = 'w';
+        break;
+
+      case 's':
+        iranyitas = 's';
+        break;
+
+      default:
+        break;
+      }
+    }
+
+    if (iranyitas == 's')
+    {
+      switch (Serial.read())
+      {
+      case 'a':
+        iranyitas = 'a';
+        break;
+
+      case 'd':
+        iranyitas = 'd';
+        break;
+
+      default:
+        break;
+      }
+    }
+
+    if (iranyitas == 'd')
+    {
+      switch (Serial.read())
+      {
+      case 'w':
+        iranyitas = 'w';
+        break;
+
+      case 's':
+        iranyitas = 's';
+        break;
+
+      default:
+        break;
+      }
+    }
+  }
+
+  lc.setLed(0, kigyo[kigyohossza - 1].x, kigyo[kigyohossza - 1].y, false);
+
+  for (size_t i = kigyohossza - 1; i > 0; i--)
+  {
+    pi[i] = pi[i-1];
+  }
+
+  pi[0] = iranyitas;
+
+  for (size_t p = 0; p < kigyohossza; p++)
+  {
+    switch (pi[p])
+    {
+    case 'w':
+      kigyo[p].y++;
+      break;
+    case 'a':
+      kigyo[p].x--;
+      break;
+
+    case 's':
+      kigyo[p].y--;
+      break;
+
+    case 'd':
+      kigyo[p].x++;
+      break;
+
+    default:
+      break;
+    }
+
+    if (kigyo[p].y > 7)
+    {
+      kigyo[p].y = 0;
+    }
+    if (kigyo[p].x > 7)
+    {
+      kigyo[p].x = 0;
+    }
+    if (kigyo[p].y < 0)
+    {
+      kigyo[p].y = 7;
+    }
+    if (kigyo[p].x < 0)
+    {
+      kigyo[p].x = 7;
+    }
+  }
+  lc.setLed(0, kigyo[0].x, kigyo[0].y, true);
+
   display.display();
-  delay(500);
+
+  delay(KIGYOLASSUSAG);
 }
