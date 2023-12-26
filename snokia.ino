@@ -21,6 +21,8 @@ const  int RST = 18;
 const int joystick_y = 36;
 const int joystick_x = 26;
 const int joystick_s = 19;
+const int JOYSTICK_LOW = 30;
+const int JOYSTICK_HIGH = 4000;
 
 // 84 x 48 matrix display
 Adafruit_PCD8544 display = Adafruit_PCD8544(CLK,DIN,DC,CE,RST);
@@ -80,76 +82,24 @@ void setup()
 void loop()
 {
 //  display.printf("x:%d y:%d %d",analogRead(joystick_x),analogRead(joystick_y), digitalRead(joystick_s));
+  int joystick_x_state = analogRead(joystick_x);
+  int joystick_y_state = analogRead(joystick_y);
 
-  if (Serial.available())
+  if (joystick_x_state < JOYSTICK_LOW && iranyitas != 'a')
   {
-    if (iranyitas == 'w')
-    {
-      switch (Serial.read())
-      {
-      case 'a':
-        iranyitas = 'a';
-        break;
-
-      case 'd':
-        iranyitas = 'd';
-        break;
-
-      default:
-        break;
-      }
-    }
-
-    if (iranyitas == 'a')
-    {
-      switch (Serial.read())
-      {
-      case 'w':
-        iranyitas = 'w';
-        break;
-
-      case 's':
-        iranyitas = 's';
-        break;
-
-      default:
-        break;
-      }
-    }
-
-    if (iranyitas == 's')
-    {
-      switch (Serial.read())
-      {
-      case 'a':
-        iranyitas = 'a';
-        break;
-
-      case 'd':
-        iranyitas = 'd';
-        break;
-
-      default:
-        break;
-      }
-    }
-
-    if (iranyitas == 'd')
-    {
-      switch (Serial.read())
-      {
-      case 'w':
-        iranyitas = 'w';
-        break;
-
-      case 's':
-        iranyitas = 's';
-        break;
-
-      default:
-        break;
-      }
-    }
+    iranyitas = 'd';
+  }
+  else if (joystick_x_state > JOYSTICK_HIGH && iranyitas != 'd')
+  {
+    iranyitas = 'a';
+  }
+  else if (joystick_y_state < JOYSTICK_LOW && iranyitas != 's')
+  {
+    iranyitas = 'w';
+  }
+  else if (joystick_y_state > JOYSTICK_HIGH && iranyitas != 'w')
+  {
+    iranyitas = 's';
   }
 
   lc.setLed(0, kigyo[kigyohossza - 1].x, kigyo[kigyohossza - 1].y, false);
