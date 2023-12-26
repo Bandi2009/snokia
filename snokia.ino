@@ -2,11 +2,21 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 
+#define FINAL
+
+#ifdef FINAL
+const int CLK = 18;
+#else
 const int CLK = 22;
+#endif
 const int DIN = 21;
 const int DC = 17;
 const int CE = 16;
+#ifdef FINAL
+const  int RST = 22;
+#else
 const  int RST = 18;
+#endif
 
 const int joystick_y = 36;
 const int joystick_x = 26;
