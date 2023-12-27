@@ -44,7 +44,9 @@ const unsigned KIGYOLASSUSAG = 500;
 const unsigned MINWAIT = 1;
 static char iranyitas = 's';
 snake kigyo[MAXKIGXOHOSSZ];
-static char pi[MAXKIGXOHOSSZ];
+int kigyo_fej = 0;
+int kigyo_farok = 0;
+int kigyo_akt_hossz = 0;
 
 class LedEmulator
 {
@@ -69,15 +71,15 @@ void setup()
   display.display();
   pinMode(joystick_s, INPUT_PULLUP);
 
-  for (int i = kigyohossza - 1; i >= 0; i--)
-  {
-    kigyo[i].x = 4;
-    kigyo[i].y = 0 + kigyohossza - 1 - i;
-    pi[i] = 's';
-    lc.setLed(0, kigyo[i].x, kigyo[i].y, true);
-    display.display();
-    delay(KIGYOLASSUSAG);
-  }
+  kigyo_fej = 0;
+  kigyo_farok = 0;
+  kigyo_akt_hossz = 1;
+  kigyo[kigyo_fej].x = 4;
+  kigyo[kigyo_fej].y = 0;
+  lc.setLed(0, kigyo[kigyo_fej].x, kigyo[kigyo_fej].y, true);
+  display.display();
+  delay(KIGYOLASSUSAG);
+
 }
 
 int hitnum = 0;
@@ -98,10 +100,20 @@ void AddNewTarget()
     target_displayed = true;
 
     found = true;
-    for (size_t p = 0; p < kigyohossza; p++)
+    int p = kigyo_farok;
+    while (true)
     {
       if (abs(target_x - kigyo[p].x) < 2 && abs(target_y - kigyo[p].y) < 2)
+      {
         found = false;
+        break;
+      }
+
+      if (p == kigyo_fej)
+        break;
+
+      if (++p >= MAXKIGXOHOSSZ)
+        p = 0;
     }
   }
 
@@ -141,68 +153,66 @@ void loop()
   }
   lastRun = millis();
 
-  lc.setLed(0, kigyo[kigyohossza - 1].x, kigyo[kigyohossza - 1].y, false);
-
-  for (size_t i = kigyohossza - 1; i > 0; i--)
+  if (kigyo_akt_hossz == kigyohossza)
   {
-    pi[i] = pi[i-1];
+    lc.setLed(0, kigyo[kigyo_farok].x, kigyo[kigyo_farok].y, false);
+    if (++kigyo_farok >= MAXKIGXOHOSSZ)
+      kigyo_farok = 0;
+  }
+  else
+    kigyo_akt_hossz++;
+
+  int new_x = kigyo[kigyo_fej].x;
+  int new_y = kigyo[kigyo_fej].y;
+  switch (iranyitas)
+  {
+  case 's':
+    new_y++;
+    if (new_y > MATRIX_HEIGTH - 1)
+      new_y = 0;
+    break;
+  case 'a':
+    new_x--;
+    if (new_x < 0)
+      new_x = MATRIX_WIDTH - 1;
+    break;
+
+  case 'w':
+    new_y--;
+    if (new_y < 0)
+      new_y = MATRIX_HEIGTH - 1;
+    break;
+
+  case 'd':
+    new_x++;
+    if (new_x > MATRIX_WIDTH - 1)
+      new_x = 0;
+    break;
+
+  default:
+    break;
   }
 
-  pi[0] = iranyitas;
+  if (++kigyo_fej >= MAXKIGXOHOSSZ)
+    kigyo_fej = 0;
+  
+  kigyo[kigyo_fej].x = new_x;
+  kigyo[kigyo_fej].y = new_y;
 
-  for (size_t p = 0; p < kigyohossza; p++)
-  {
-    switch (pi[p])
-    {
-    case 's':
-      kigyo[p].y++;
-      break;
-    case 'a':
-      kigyo[p].x--;
-      break;
+  lc.setLed(0, kigyo[kigyo_fej].x, kigyo[kigyo_fej].y, true);
 
-    case 'w':
-      kigyo[p].y--;
-      break;
-
-    case 'd':
-      kigyo[p].x++;
-      break;
-
-    default:
-      break;
-    }
-
-    if (kigyo[p].y > MATRIX_HEIGTH - 1 )
-    {
-      kigyo[p].y = 0;
-    }
-    if (kigyo[p].x > MATRIX_WIDTH - 1)
-    {
-      kigyo[p].x = 0;
-    }
-    if (kigyo[p].y < 0)
-    {
-      kigyo[p].y = MATRIX_HEIGTH - 1;
-    }
-    if (kigyo[p].x < 0)
-    {
-      kigyo[p].x = MATRIX_WIDTH - 1;
-    }
-  }
-  lc.setLed(0, kigyo[0].x, kigyo[0].y, true);
-
-  if (kigyo[0].x == target_x && kigyo[0].y == target_y)
+  if (kigyo[kigyo_fej].x == target_x && kigyo[kigyo_fej].y == target_y)
   {
     hitnum++;
     target_displayed = false;
-//    kigyohossza++;
+    kigyohossza++;
   }
   else
   {
-      for (size_t p = 1; p < kigyohossza; p++)
+      int p = kigyo_farok;
+      while (p != kigyo_fej)
       {
-        if ( kigyo[p].x == kigyo[0].x && kigyo[p].y == kigyo[0].y)
+        if ( kigyo[p].x == kigyo[kigyo_fej].x && kigyo[p].y == kigyo[kigyo_fej].y)
         {
           display.clearDisplay();
           display.setCursor(0,0);
@@ -210,6 +220,9 @@ void loop()
           display.display();
           delay(4000000);
         }
+
+        if (++p >= MAXKIGXOHOSSZ)
+          p = 0;
       }
   }
 
