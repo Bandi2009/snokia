@@ -41,6 +41,7 @@ const int MAXKIGXOHOSSZ = 64;
 
 int kigyohossza = 3;
 const unsigned KIGYOLASSUSAG = 500;
+const unsigned MINWAIT = 1;
 static char iranyitas = 's';
 snake kigyo[MAXKIGXOHOSSZ];
 static char pi[MAXKIGXOHOSSZ];
@@ -132,6 +133,14 @@ void loop()
     iranyitas = 's';
   }
 
+  static unsigned long lastRun = 0;
+  if (lastRun != 0 && millis() - lastRun < KIGYOLASSUSAG)
+  {
+    delay(MINWAIT);
+    return;
+  }
+  lastRun = millis();
+
   lc.setLed(0, kigyo[kigyohossza - 1].x, kigyo[kigyohossza - 1].y, false);
 
   for (size_t i = kigyohossza - 1; i > 0; i--)
@@ -206,5 +215,5 @@ void loop()
 
   display.display();
 
-  delay(KIGYOLASSUSAG);
+  delay(MINWAIT);
 }
