@@ -84,28 +84,32 @@ int hitnum = 0;
 bool target_displayed = false;
 int target_x, target_y;
 
+void AddNewTarget()
+{
+  if (target_displayed)
+    return;
+
+  bool found = false;
+  while(!found)
+  {
+    target_x = random(0, MATRIX_WIDTH -1);
+    target_y = random(0, MATRIX_HEIGTH -1);
+    target_displayed = true;
+
+    found = true;
+    for (size_t p = 0; p < kigyohossza; p++)
+    {
+      if (abs(target_x - kigyo[p].x) < 2 && abs(target_y - kigyo[p].y) < 2)
+        found = false;
+    }
+  }
+
+  lc.setLed(0, target_x, target_y, true);
+}
+
 void loop()
 {
-
-  if (! target_displayed)
-  {
-    bool found = false;
-    while(!found)
-    {
-      target_x = random(0, MATRIX_WIDTH -1);
-      target_y = random(0, MATRIX_HEIGTH -1);
-      target_displayed = true;
-
-      found = true;
-      for (size_t p = 0; p < kigyohossza; p++)
-      {
-        if (abs(target_x - kigyo[p].x) < 2 && abs(target_y - kigyo[p].y) < 2)
-          found = false;
-      }
-    }
-
-    lc.setLed(0, target_x, target_y, true);
-  }
+  AddNewTarget();
 
 //  display.printf("x:%d y:%d %d",analogRead(joystick_x),analogRead(joystick_y), digitalRead(joystick_s));
   int joystick_x_state = analogRead(joystick_x);
