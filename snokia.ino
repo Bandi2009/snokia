@@ -85,19 +85,19 @@ void loop()
   int joystick_x_state = analogRead(joystick_x);
   int joystick_y_state = analogRead(joystick_y);
 
-  if (joystick_x_state < JOYSTICK_LOW && iranyitas != 'a')
+  if (joystick_x_state > JOYSTICK_HIGH && iranyitas != 'a')
   {
     iranyitas = 'd';
   }
-  else if (joystick_x_state > JOYSTICK_HIGH && iranyitas != 'd')
+  else if (joystick_x_state < JOYSTICK_LOW && iranyitas != 'd')
   {
     iranyitas = 'a';
   }
-  else if (joystick_y_state < JOYSTICK_LOW && iranyitas != 's')
+  else if (joystick_y_state > JOYSTICK_HIGH && iranyitas != 's')
   {
     iranyitas = 'w';
   }
-  else if (joystick_y_state > JOYSTICK_HIGH && iranyitas != 'w')
+  else if (joystick_y_state < JOYSTICK_LOW && iranyitas != 'w')
   {
     iranyitas = 's';
   }
