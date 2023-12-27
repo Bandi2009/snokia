@@ -79,8 +79,34 @@ void setup()
   }
 }
 
+int hitnum = 0;
+
+bool target_displayed = false;
+int target_x, target_y;
+
 void loop()
 {
+
+  if (! target_displayed)
+  {
+    bool found = false;
+    while(!found)
+    {
+      target_x = random(0, MATRIX_WIDTH -1);
+      target_y = random(0, MATRIX_HEIGTH -1);
+      target_displayed = true;
+
+      found = true;
+      for (size_t p = 0; p < kigyohossza; p++)
+      {
+        if (abs(target_x - kigyo[p].x) < 2 && abs(target_y - kigyo[p].y) < 2)
+          found = false;
+      }
+    }
+
+    lc.setLed(0, target_x, target_y, true);
+  }
+
 //  display.printf("x:%d y:%d %d",analogRead(joystick_x),analogRead(joystick_y), digitalRead(joystick_s));
   int joystick_x_state = analogRead(joystick_x);
   int joystick_y_state = analogRead(joystick_y);
@@ -152,6 +178,27 @@ void loop()
     }
   }
   lc.setLed(0, kigyo[0].x, kigyo[0].y, true);
+
+  if (kigyo[0].x == target_x && kigyo[0].y == target_y)
+  {
+    hitnum++;
+    target_displayed = false;
+//    kigyohossza++;
+  }
+  else
+  {
+      for (size_t p = 1; p < kigyohossza; p++)
+      {
+        if ( kigyo[p].x == kigyo[0].x && kigyo[p].y == kigyo[0].y)
+        {
+          display.clearDisplay();
+          display.setCursor(0,0);
+          display.printf("Hits:%d\n\n Press reset\n button to\n restart!", hitnum);
+          display.display();
+          delay(4000000);
+        }
+      }
+  }
 
   display.display();
 
