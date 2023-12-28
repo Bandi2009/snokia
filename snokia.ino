@@ -163,31 +163,30 @@ void loop()
   else
     kigyo_akt_hossz++;
 
-  int new_x = kigyo[kigyo_fej].x;
-  int new_y = kigyo[kigyo_fej].y;
+  snake ujfej = kigyo[kigyo_fej];
   switch (iranyitas)
   {
   case 's':
-    new_y++;
-    if (new_y > MATRIX_HEIGTH - 1)
-      new_y = 0;
+    ujfej.y++;
+    if (ujfej.y > MATRIX_HEIGTH - 1)
+      ujfej.y = 0;
     break;
   case 'a':
-    new_x--;
-    if (new_x < 0)
-      new_x = MATRIX_WIDTH - 1;
+    ujfej.x--;
+    if (ujfej.x < 0)
+      ujfej.x = MATRIX_WIDTH - 1;
     break;
 
   case 'w':
-    new_y--;
-    if (new_y < 0)
-      new_y = MATRIX_HEIGTH - 1;
+    ujfej.y--;
+    if (ujfej.y < 0)
+      ujfej.y = MATRIX_HEIGTH - 1;
     break;
 
   case 'd':
-    new_x++;
-    if (new_x > MATRIX_WIDTH - 1)
-      new_x = 0;
+    ujfej.x++;
+    if (ujfej.x > MATRIX_WIDTH - 1)
+      ujfej.x = 0;
     break;
 
   default:
