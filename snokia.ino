@@ -47,6 +47,7 @@ snake kigyo[MAXKIGXOHOSSZ];
 int kigyo_fej = 0;
 int kigyo_farok = 0;
 int kigyo_akt_hossz = 0;
+const int TARGET_KIGYO_MIN_TAV = 2;
 
 class LedEmulator
 {
@@ -82,7 +83,7 @@ void setup()
 
 }
 
-int hitnum = 0;
+int score = 0;
 
 bool target_displayed = false;
 int target_x, target_y;
@@ -103,7 +104,7 @@ void AddNewTarget()
     int p = kigyo_farok;
     while (true)
     {
-      if (abs(target_x - kigyo[p].x) < 2 && abs(target_y - kigyo[p].y) < 2)
+      if (abs(target_x - kigyo[p].x) < TARGET_KIGYO_MIN_TAV && abs(target_y - kigyo[p].y) < TARGET_KIGYO_MIN_TAV)
       {
         found = false;
         break;
@@ -196,14 +197,13 @@ void loop()
   if (++kigyo_fej >= MAXKIGXOHOSSZ)
     kigyo_fej = 0;
   
-  kigyo[kigyo_fej].x = new_x;
-  kigyo[kigyo_fej].y = new_y;
+  kigyo[kigyo_fej] = ujfej;
 
   lc.setLed(0, kigyo[kigyo_fej].x, kigyo[kigyo_fej].y, true);
 
   if (kigyo[kigyo_fej].x == target_x && kigyo[kigyo_fej].y == target_y)
   {
-    hitnum++;
+    score++;
     target_displayed = false;
     kigyohossza++;
   }
@@ -216,7 +216,7 @@ void loop()
         {
           display.clearDisplay();
           display.setCursor(0,0);
-          display.printf("Hits:%d\n\n Press reset\n button to\n restart!", hitnum);
+          display.printf("Hits:%d\n\n Press reset\n button to\n restart!", score);
           display.display();
           delay(4000000);
         }
