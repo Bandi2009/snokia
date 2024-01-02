@@ -30,12 +30,12 @@ Adafruit_PCD8544 display = Adafruit_PCD8544(CLK,DIN,DC,CE,RST);
 const int MATRIX_WIDTH = 14;
 const int MATRIX_HEIGTH = 8;
 
-struct snake
+struct Point
 {
   int x;
   int y;
 };
-typedef struct snake snake;
+typedef struct Point Point;
 
 const int MAXKIGXOHOSSZ = 64;
 
@@ -43,7 +43,7 @@ int kigyohossza = 3;
 const unsigned KIGYOLASSUSAG = 500;
 const unsigned MINWAIT = 1;
 static char iranyitas = 's';
-snake kigyo[MAXKIGXOHOSSZ];
+Point kigyo[MAXKIGXOHOSSZ];
 int kigyo_fej = 0;
 int kigyo_farok = 0;
 int kigyo_akt_hossz = 0;
@@ -163,7 +163,7 @@ void loop()
   else
     kigyo_akt_hossz++;
 
-  snake ujfej = kigyo[kigyo_fej];
+  Point ujfej = kigyo[kigyo_fej];
   switch (iranyitas)
   {
   case 's':
