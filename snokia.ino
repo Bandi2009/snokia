@@ -41,13 +41,13 @@ const unsigned MINWAIT = 1;
 const int TARGET_KIGYO_MIN_TAV = 2;
 struct Kigyo
 {
-  int kigyohossza = 3;
-  const unsigned KIGYOLASSUSAG = 500;
+  int hossz = 3;
+  const unsigned LASSUSAG = 500;
   char iranyitas = 's';
   Point test[MAXKIGXOHOSSZ];
-  int kigyo_fej = 0;
-  int kigyo_farok = 0;
-  int kigyo_akt_hossz = 0;
+  int fej = 0;
+  int farok = 0;
+  int akt_hossz = 0;
 };
 
 Kigyo kigyo;
@@ -75,14 +75,14 @@ void setup()
   display.display();
   pinMode(joystick_s, INPUT_PULLUP);
 
-  kigyo.kigyo_fej = 0;
-  kigyo.kigyo_farok = 0;
-  kigyo.kigyo_akt_hossz = 1;
-  kigyo.test[kigyo.kigyo_fej].x = 4;
-  kigyo.test[kigyo.kigyo_fej].y = 0;
-  lc.setLed(0, kigyo.test[kigyo.kigyo_fej].x, kigyo.test[kigyo.kigyo_fej].y, true);
+  kigyo.fej = 0;
+  kigyo.farok = 0;
+  kigyo.akt_hossz = 1;
+  kigyo.test[kigyo.fej].x = 4;
+  kigyo.test[kigyo.fej].y = 0;
+  lc.setLed(0, kigyo.test[kigyo.fej].x, kigyo.test[kigyo.fej].y, true);
   display.display();
-  delay(kigyo.KIGYOLASSUSAG);
+  delay(kigyo.LASSUSAG);
 
 }
 
@@ -104,7 +104,7 @@ void AddNewTarget()
     target_displayed = true;
 
     found = true;
-    int p = kigyo.kigyo_farok;
+    int p = kigyo.farok;
     while (true)
     {
       if (abs(target_x - kigyo.test[p].x) < TARGET_KIGYO_MIN_TAV && abs(target_y - kigyo.test[p].y) < TARGET_KIGYO_MIN_TAV)
@@ -113,7 +113,7 @@ void AddNewTarget()
         break;
       }
 
-      if (p == kigyo.kigyo_fej)
+      if (p == kigyo.fej)
         break;
 
       if (++p >= MAXKIGXOHOSSZ)
@@ -150,23 +150,23 @@ void loop()
   }
 
   static unsigned long lastRun = 0;
-  if (lastRun != 0 && millis() - lastRun < kigyo.KIGYOLASSUSAG)
+  if (lastRun != 0 && millis() - lastRun < kigyo.LASSUSAG)
   {
     delay(MINWAIT);
     return;
   }
   lastRun = millis();
 
-  if (kigyo.kigyo_akt_hossz == kigyo.kigyohossza)
+  if (kigyo.akt_hossz == kigyo.hossz)
   {
-    lc.setLed(0, kigyo.test[kigyo.kigyo_farok].x, kigyo.test[kigyo.kigyo_farok].y, false);
-    if (++kigyo.kigyo_farok >= MAXKIGXOHOSSZ)
-      kigyo.kigyo_farok = 0;
+    lc.setLed(0, kigyo.test[kigyo.farok].x, kigyo.test[kigyo.farok].y, false);
+    if (++kigyo.farok >= MAXKIGXOHOSSZ)
+      kigyo.farok = 0;
   }
   else
-    kigyo.kigyo_akt_hossz++;
+    kigyo.akt_hossz++;
 
-  Point ujfej = kigyo.test[kigyo.kigyo_fej];
+  Point ujfej = kigyo.test[kigyo.fej];
   switch (kigyo.iranyitas)
   {
   case 's':
@@ -196,25 +196,25 @@ void loop()
     break;
   }
 
-  if (++kigyo.kigyo_fej >= MAXKIGXOHOSSZ)
-    kigyo.kigyo_fej = 0;
+  if (++kigyo.fej >= MAXKIGXOHOSSZ)
+    kigyo.fej = 0;
   
-  kigyo.test[kigyo.kigyo_fej] = ujfej;
+  kigyo.test[kigyo.fej] = ujfej;
 
-  lc.setLed(0, kigyo.test[kigyo.kigyo_fej].x, kigyo.test[kigyo.kigyo_fej].y, true);
+  lc.setLed(0, kigyo.test[kigyo.fej].x, kigyo.test[kigyo.fej].y, true);
 
-  if (kigyo.test[kigyo.kigyo_fej].x == target_x && kigyo.test[kigyo.kigyo_fej].y == target_y)
+  if (kigyo.test[kigyo.fej].x == target_x && kigyo.test[kigyo.fej].y == target_y)
   {
     score++;
     target_displayed = false;
-    kigyo.kigyohossza++;
+    kigyo.hossz++;
   }
   else
   {
-      int p = kigyo.kigyo_farok;
-      while (p != kigyo.kigyo_fej)
+      int p = kigyo.farok;
+      while (p != kigyo.fej)
       {
-        if ( kigyo.test[p].x == kigyo.test[kigyo.kigyo_fej].x && kigyo.test[p].y == kigyo.test[kigyo.kigyo_fej].y)
+        if ( kigyo.test[p].x == kigyo.test[kigyo.fej].x && kigyo.test[p].y == kigyo.test[kigyo.fej].y)
         {
           display.clearDisplay();
           display.setCursor(0,0);
