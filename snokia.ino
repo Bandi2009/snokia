@@ -30,7 +30,7 @@ Adafruit_PCD8544 display = Adafruit_PCD8544(CLK,DIN,DC,CE,RST);
 const int MATRIX_WIDTH = 14;
 const int MATRIX_HEIGTH = 8;
 
-struct Point
+struct Pont
 {
   int x;
   int y;
@@ -44,7 +44,7 @@ struct Kigyo
   int hossz = 3;
   const unsigned LASSUSAG = 500;
   char iranyitas = 's';
-  Point test[MAXKIGXOHOSSZ];
+  Pont test[MAXKIGXOHOSSZ];
   int fej = 0;
   int farok = 0;
   int akt_hossz = 0;
@@ -166,7 +166,7 @@ void loop()
   else
     kigyo.akt_hossz++;
 
-  Point ujfej = kigyo.test[kigyo.fej];
+  Pont ujfej = kigyo.test[kigyo.fej];
   switch (kigyo.iranyitas)
   {
   case 's':
