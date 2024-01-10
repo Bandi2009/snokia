@@ -6,19 +6,49 @@ const int CLK = 18;
 const int DIN = 21;
 const int DC = 17;
 const int CE = 16;
-const  int RST = 22;
-
-const int joystick_y = 36;
-const int joystick_x = 26;
-const int joystick_s = 19;
-const int JOYSTICK_LOW = 30;
-const int JOYSTICK_HIGH = 4000;
+const int RST = 22;
 
 // 84 x 48 matrix display
 Adafruit_PCD8544 display = Adafruit_PCD8544(CLK,DIN,DC,CE,RST);
 
 const int MATRIX_WIDTH = 14;
 const int MATRIX_HEIGTH = 8;
+
+struct Wasd_joystick
+{
+  static const int joystick_y = 36;
+  static const int joystick_x = 26;
+  static const int joystick_s = 19;
+  static const int JOYSTICK_LOW = 30;
+  static const int JOYSTICK_HIGH = 4000;
+
+  void Setup()
+  {
+    pinMode(joystick_s, INPUT_PULLUP);
+  }
+
+  char AdjUjIranyt()
+  {
+    int joystick_x_state = analogRead(joystick_x);
+    int joystick_y_state = analogRead(joystick_y);
+
+    if (joystick_x_state > JOYSTICK_HIGH)
+      return 'd';
+
+    if (joystick_x_state < JOYSTICK_LOW)
+      return 'a';
+
+    if (joystick_y_state > JOYSTICK_HIGH)
+      return 'w';
+
+    if (joystick_y_state < JOYSTICK_LOW)
+      return 's';
+
+    return 0;  
+  }
+
+};
+Wasd_joystick wasd_iranyitas;
 
 struct Pont
 {
@@ -63,7 +93,7 @@ void setup()
   display.setContrast(50);
   display.clearDisplay();
   display.display();
-  pinMode(joystick_s, INPUT_PULLUP);
+  wasd_iranyitas.Setup();
 
   kigyo.fej = 0;
   kigyo.farok = 0;
@@ -119,25 +149,23 @@ void loop()
   AddNewTarget();
 
 //  display.printf("x:%d y:%d %d",analogRead(joystick_x),analogRead(joystick_y), digitalRead(joystick_s));
-  int joystick_x_state = analogRead(joystick_x);
-  int joystick_y_state = analogRead(joystick_y);
+  char uj_irany = wasd_iranyitas.AdjUjIranyt();
+  
+  do
+  {
+    if (uj_irany == 0)
+      break;
+    if (uj_irany == 'd' && kigyo.iranyitas == 'a')
+      break;
+    if (uj_irany == 'a' && kigyo.iranyitas == 'd')
+      break;
+    if (uj_irany == 'w' && kigyo.iranyitas == 's')
+      break;
+    if (uj_irany == 's' && kigyo.iranyitas == 'w')
+      break;
 
-  if (joystick_x_state > JOYSTICK_HIGH && kigyo.iranyitas != 'a')
-  {
-    kigyo.iranyitas = 'd';
-  }
-  else if (joystick_x_state < JOYSTICK_LOW && kigyo.iranyitas != 'd')
-  {
-    kigyo.iranyitas = 'a';
-  }
-  else if (joystick_y_state > JOYSTICK_HIGH && kigyo.iranyitas != 's')
-  {
-    kigyo.iranyitas = 'w';
-  }
-  else if (joystick_y_state < JOYSTICK_LOW && kigyo.iranyitas != 'w')
-  {
-    kigyo.iranyitas = 's';
-  }
+    kigyo.iranyitas = uj_irany;
+  } while(false);
 
   static unsigned long lastRun = 0;
   if (lastRun != 0 && millis() - lastRun < kigyo.LASSUSAG)
