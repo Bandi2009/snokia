@@ -110,26 +110,31 @@ void setup()
 
 int score = 0;
 
-bool target_displayed = false;
-int target_x, target_y;
-
-void AddNewTarget()
+struct Alma
 {
-  if (target_displayed)
+  Pont p;
+  bool latszik = false;
+};
+
+Alma alma;
+
+void AdjUjAlmat()
+{
+  if (alma.latszik)
     return;
 
   bool found = false;
   while(!found)
   {
-    target_x = random(0, MATRIX_WIDTH -1);
-    target_y = random(0, MATRIX_HEIGTH -1);
-    target_displayed = true;
+    alma.p.x = random(0, MATRIX_WIDTH -1);
+    alma.p.y = random(0, MATRIX_HEIGTH -1);
+    alma.latszik = true;
 
     found = true;
     int p = kigyo.farok;
     while (true)
     {
-      if (abs(target_x - kigyo.test[p].x) < TARGET_KIGYO_MIN_TAV && abs(target_y - kigyo.test[p].y) < TARGET_KIGYO_MIN_TAV)
+      if (abs(alma.p.x - kigyo.test[p].x) < TARGET_KIGYO_MIN_TAV && abs(alma.p.y - kigyo.test[p].y) < TARGET_KIGYO_MIN_TAV)
       {
         found = false;
         break;
@@ -143,12 +148,12 @@ void AddNewTarget()
     }
   }
 
-  lc.setLed(0, target_x, target_y, true);
+  lc.setLed(0, alma.p.x, alma.p.y, true);
 }
 
 void loop()
 {
-  AddNewTarget();
+  AdjUjAlmat();
 
 //  display.printf("x:%d y:%d %d",analogRead(joystick_x),analogRead(joystick_y), digitalRead(joystick_s));
   char uj_irany = wasd_iranyitas.AdjUjIranyt();
@@ -223,10 +228,10 @@ void loop()
 
   lc.setLed(0, kigyo.test[kigyo.fej].x, kigyo.test[kigyo.fej].y, true);
 
-  if (kigyo.test[kigyo.fej].x == target_x && kigyo.test[kigyo.fej].y == target_y)
+  if (kigyo.test[kigyo.fej].x == alma.p.x && kigyo.test[kigyo.fej].y == alma.p.y)
   {
     score++;
-    target_displayed = false;
+    alma.latszik = false;
     kigyo.hossz++;
   }
   else
