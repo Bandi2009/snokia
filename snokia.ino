@@ -56,15 +56,17 @@ struct Pont
   int y;
 };
 
-const int MAXKIGXOHOSSZ = 64;
+
 const unsigned MINWAIT = 1;
 const int TARGET_KIGYO_MIN_TAV = 2;
+
 struct Kigyo
 {
+  static const int MAX_HOSSZ = 64;
   int hossz = 3;
   const unsigned LASSUSAG = 500;
   char iranyitas = 's';
-  Pont test[MAXKIGXOHOSSZ];
+  Pont test[MAX_HOSSZ];
   int fej = 0;
   int farok = 0;
   int akt_hossz = 0;
@@ -136,7 +138,7 @@ void AddNewTarget()
       if (p == kigyo.fej)
         break;
 
-      if (++p >= MAXKIGXOHOSSZ)
+      if (++p >= Kigyo::MAX_HOSSZ)
         p = 0;
     }
   }
@@ -178,7 +180,7 @@ void loop()
   if (kigyo.akt_hossz == kigyo.hossz)
   {
     lc.setLed(0, kigyo.test[kigyo.farok].x, kigyo.test[kigyo.farok].y, false);
-    if (++kigyo.farok >= MAXKIGXOHOSSZ)
+    if (++kigyo.farok >= Kigyo::MAX_HOSSZ)
       kigyo.farok = 0;
   }
   else
@@ -214,7 +216,7 @@ void loop()
     break;
   }
 
-  if (++kigyo.fej >= MAXKIGXOHOSSZ)
+  if (++kigyo.fej >= Kigyo::MAX_HOSSZ)
     kigyo.fej = 0;
   
   kigyo.test[kigyo.fej] = ujfej;
@@ -241,7 +243,7 @@ void loop()
           delay(4000000);
         }
 
-        if (++p >= MAXKIGXOHOSSZ)
+        if (++p >= Kigyo::MAX_HOSSZ)
           p = 0;
       }
   }
